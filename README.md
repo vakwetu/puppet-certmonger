@@ -1,6 +1,6 @@
 [![Puppet
-Forge](http://img.shields.io/puppetforge/v/earsdown/certmonger.svg)](https://forge.puppetlabs.com/earsdown/certmonger)
-[![Build Status](https://travis-ci.org/earsdown/puppet-certmonger.svg?branch=master)](https://travis-ci.org/earsdown/puppet-certmonger)
+Forge](http://img.shields.io/puppetforge/v/saltedsignal/certmonger.svg)](https://forge.puppetlabs.com/saltedsignal/certmonger)
+[![Build Status](https://travis-ci.org/saltedsignal/puppet-certmonger.svg?branch=master)](https://travis-ci.org/saltedsignal/puppet-certmonger)
 
 # Certmonger puppet module
 

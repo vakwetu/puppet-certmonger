@@ -1,12 +1,12 @@
 {
-  "name": "earsdown-certmonger",
-  "version": "1.2.0",
-  "author": "earsdown",
+  "name": "saltedsignal-certmonger",
+  "version": "2.0.0",
+  "author": "saltedsignal",
   "summary": "Certmonger puppet module",
   "license": "Apache-2.0",
-  "source": "https://github.com/earsdown/puppet-certmonger",
-  "project_page": "https://github.com/earsdown/puppet-certmonger",
-  "issues_url": "https://github.com/earsdown/puppet-certmonger/issues",
+  "source": "https://github.com/saltedsignal/puppet-certmonger",
+  "project_page": "https://github.com/saltedsignal/puppet-certmonger",
+  "issues_url": "https://github.com/saltedsignal/puppet-certmonger/issues",
   "description": "Certmonger puppet module for integration with IPA CAs",
   "tags": ["certmonger", "ipa", "ca","ipa-getcert","freeipa"],
   "dependencies": [
