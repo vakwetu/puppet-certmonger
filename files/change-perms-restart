@@ -1,6 +1,6 @@
 #!/bin/bash
 
-unset options services syslog
+unset options services syslog timespec
 
 case "$(id -nu)" in
   root) ;;
@@ -13,11 +13,12 @@ usage () {
   echo "   -R     change ownership/group/modes recursively (e.g. when specifying a folder)" >&2
   echo "   -r     space separated list of services to reload via systemctl" >&2
   echo "   -t     space separated list of services to restart via systemctl" >&2
+  echo "   -T     systemd oncalendar timespec. If specified, will delay the restart using a one-time systemd timer via systemd-run" >&2
   echo "   -s     log output (if any) to syslog with specified facility/severity" >&2
   echo "Example: $(basename $0) -R -s daemon.notice -r 'httpd rsyslog' -t 'postfix postgresql' root:pkiuser:0644:/etc/pki/tls/certs/localhost.crt root:pkiuser:0600:/etc/pki/tls/private/localhost.key" >&2
 }
 
-while getopts ":Rr:s:t:" opt; do
+while getopts ":Rr:s:t:T:" opt; do
   case "$opt" in
     R) options="-R"
        ;;
@@ -26,6 +27,8 @@ while getopts ":Rr:s:t:" opt; do
     t) services_restart="$OPTARG"
        ;;
     s) syslog="$OPTARG"
+       ;;
+    T) timespec="$OPTARG"
        ;;
     *) usage ; exit 1
        ;;
@@ -55,7 +58,12 @@ for i in $@; do
 done
 
 for service in $services_restart; do
-  log "$(systemctl restart $service 2>&1)"
+  if [ -n "${timespec}" ]; then
+    unit="${service}-$((RANDOM + RANDOM + RANDOM + RANDOM))"
+    log "$(systemd-run --oncalendar "${timespec}" --unit "${unit}" /bin/bash -c "/bin/systemctl restart ${service} 2>&1; /bin/systemctl stop ${unit}.timer 2>&1" 2>&1)"
+  else
+    log "$(systemctl restart $service 2>&1)"
+  fi
 done
 for service in $services_reload; do
   log "$(systemctl reload $service 2>&1)"
