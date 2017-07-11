@@ -57,15 +57,16 @@ Note: there is no need to use the `certmonger` class, it gets included by the de
 A notable limitation of `ipa-getcert` is that the `postsavecmd` can only take a single command. This means changing file ownership/modes and restarting services requires the use of a separate helper utility. This module includes a creatively named script called `change-perms-restart`, which gets installed by the `certmonger` class as `/usr/local/bin/change-perms-restart`. Usage is as follows:
 
 ```
-/usr/local/bin/change-perms-restart [ -R] [ -r 'service1 service2' ] [ -t 'service3 service4' ] [ -s facility.severity ] owner:group:modes:/path/to/file [ ... ]
+/usr/local/bin/change-perms-restart [-R] [ -r 'service1 service2' ] [ -t 'service3 service4' ] [ -T 'TIMESPEC' ] [ -s facility.severity ] owner:group:modes:/path/to/file [ ... ]
 
    -R     change ownership/group/modes recursively (e.g. when specifying a folder)
    -r     space separated list of services to reload via systemctl
    -t     space separated list of services to restart via systemctl
+   -T     systemd oncalendar timespec. If specified, will delay the restart using a one-time systemd timer via systemd-run.
    -s     log output (if any) to syslog with specified facility/severity
 ```
 
-For example: `change-perms-restart -R -s daemon.notice  -r 'httpd rsyslog' -t 'postfix postgresql' root:pkiuser:0644:/etc/pki/tls/certs/localhost.crt root:pkiuser:0600:/etc/pki/tls/private/localhost.key`
+For example: `change-perms-restart -R -s daemon.notice  -r 'httpd rsyslog' -t 'postfix postgresql' -T '02:00:00' root:pkiuser:0644:/etc/pki/tls/certs/localhost.crt root:pkiuser:0600:/etc/pki/tls/private/localhost.key`
 
 ### Other limitations:
 * The current state is determined by calling a custom shell script (supplied). Not ideal, I know.
