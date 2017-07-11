@@ -60,7 +60,7 @@ done
 for service in $services_restart; do
   if [ -n "${timespec}" ]; then
     unit="${service}-$((RANDOM + RANDOM + RANDOM + RANDOM))"
-    log "$(systemd-run --oncalendar "${timespec}" --unit "${unit}" /bin/bash -c "/bin/systemctl restart ${service} 2>&1; /bin/systemctl stop ${unit}.timer 2>&1" 2>&1)"
+    log "$(systemd-run --on-calendar "${timespec}" --unit "${unit}" /bin/bash -c "/bin/systemctl restart ${service} 2>&1; /bin/systemctl stop ${unit}.timer 2>&1" 2>&1)"
   else
     log "$(systemctl restart $service 2>&1)"
   fi
