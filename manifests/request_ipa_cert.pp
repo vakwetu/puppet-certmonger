@@ -25,6 +25,7 @@
 #                                      e.g. `["digitalSignature", "nonRepudiation", "keyEncipherment"]`
 # * `presavecmd`  (optional; String) - Command certmonger should run before saving the certificate
 # * `postsavecmd` (optional; String) - Command certmonger should run after saving the certificate
+# * `cacertfile`  (optional; String) - Ask certmonger to save the CA's certificate to this path. eg. `/path/to/ca.crt`
 # * `profile`     (optional; String) - Ask the CA to process request using the named profile. e.g. `caIPAserviceCert`
 # * `issuer`      (optional; String) - Ask the CA to process the request using the named issuer. e.g. `ca-puppet`
 # * `issuerdn`    (optional; String) - If a specific issuer is needed, provide the issuer DN. e.g. `CN=Puppet CA`
@@ -41,6 +42,7 @@ define certmonger::request_ipa_cert (
   $presavecmd  = undef,
   $postsavecmd = undef,
   $profile     = undef,
+  $cacertfile  = undef,
   $issuer      = undef,
   $issuerdn    = undef,
 ) {
@@ -133,6 +135,7 @@ define certmonger::request_ipa_cert (
   if $presavecmd { $options_presavecmd = "-B '${presavecmd}'" } else { $options_presavecmd = '' }
   if $postsavecmd { $options_postsavecmd = "-C '${postsavecmd}'" } else { $options_postsavecmd = '' }
   if $profile { $options_profile = "-T '${profile}'" } else { $options_profile = '' }
+  if $cacertfile { $options_cacertfile = "-F '${cacertfile}'" } else { $options_cacertfile = '' }
   if $issuer {
     $options_issuer = "-X '${issuer}'"
     if $issuerdn {
@@ -145,7 +148,7 @@ define certmonger::request_ipa_cert (
     $options_issuerdn = ''
   }
 
-  $resubmit_attrib_options = "${options_subject} ${options_principal} ${options_dns} \
+  $resubmit_attrib_options = "${options_subject} ${options_principal} ${options_dns} ${options_cacertfile} \
     ${options_usage} ${options_eku} ${options_issuer} ${options_profile} ${options_presavecmd} ${options_postsavecmd}"
   $request_attrib_options = "${options_keysize} ${resubmit_attrib_options}"
   $verify_attrib_options = "${options_subject} ${options_principal} ${options_dns_csv} \
