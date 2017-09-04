@@ -145,8 +145,9 @@ define certmonger::request_ipa_cert (
     $options_issuerdn = ''
   }
 
-  $request_attrib_options = "${options_keysize} ${options_subject} ${options_principal} ${options_dns} \
+  $resubmit_attrib_options = "${options_subject} ${options_principal} ${options_dns} \
     ${options_usage} ${options_eku} ${options_issuer} ${options_profile} ${options_presavecmd} ${options_postsavecmd}"
+  $request_attrib_options = "${options_keysize} ${resubmit_attrib_options}"
   $verify_attrib_options = "${options_subject} ${options_principal} ${options_dns_csv} \
     ${options_usage_csv} ${options_eku_csv} ${options_issuerdn} ${options_presavecmd} ${options_postsavecmd}"
 
@@ -175,7 +176,7 @@ define certmonger::request_ipa_cert (
     refreshonly => true,
     path        => '/usr/bin:/bin',
     provider    => 'shell',
-    command     => "ipa-getcert resubmit ${options_certfile} ${request_attrib_options}",
+    command     => "ipa-getcert resubmit ${options_certfile} ${resubmit_attrib_options}",
     unless      => "${::certmonger::scripts::verifyscript} ${options_certfile} ${verify_attrib_options}",
     onlyif      => ["${::certmonger::scripts::verifyscript} ${options}","openssl x509 -in ${certfile} -noout"],
     notify      => Exec["ipa-getcert-${certfile}-verify"],
