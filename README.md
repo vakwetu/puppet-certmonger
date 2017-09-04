@@ -21,6 +21,7 @@ Note: there is no need to use the `certmonger` class, it gets included by the de
 ### Parameters:
 * `certfile`    (required; String) - Full path of certificate to be managed by certmonger. e.g. `/path/to/certificate.crt`
 * `keyfile`     (required; String) - Full path to private key file to be managed by certmonger. e.g. `/path/to/key.pem`
+* `keysize`     (optional; String) - Generate keys with a specific keysize in bits. e.g. `4096`
 * `hostname`    (optional; String) - Hostname to use (appears in subject field of cert). e.g. `webserver.example.com`
 * `principal`   (optional; String) - IPA service principal certmonger should use when requesting cert.
                                      e.g. `HTTP/webserver.example.com`.
@@ -75,6 +76,7 @@ For example: `change-perms-restart -R -s daemon.notice  -r 'httpd rsyslog' -t 'p
 * Only manages subject, dns (subjectAltNames), key usage, eku, principal, issuer, pre/post save commands.
 * Only manages the principal if it appears in the issued certificate - which depends on your CA profile.
 * Once a certificate is issued, this module can't manage the profile because it doesn't appear in the issued certificate.
+* This module won't re-generate keys if you set or change the keysize of an existing certificate.
 * Subject is hardcoded to `CN=$hostname`.
 * Only works if being run on a system already joined to an IPA domain, and only works against IPA CAs.
 * If you specify a hostname and don't specify a principal, this module will assume you want `host/$hostname`.

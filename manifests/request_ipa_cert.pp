@@ -4,6 +4,7 @@
 # # Parameters:
 # * `certfile`    (required; String) - Full path of certificate to be managed by certmonger. e.g. `/path/to/certificate.crt`
 # * `keyfile`     (required; String) - Full path to private key file to be manaegd by certmonger. e.g. `/path/to/key.pem`
+# * `keysize`     (optional; String) - Generate keys with a specific keysize in bits. e.g. `4096`
 # * `hostname`    (optional; String) - Hostname to use (appears in subject field of cert). e.g. `webserver.example.com`
 # * `principal`   (optional; String) - IPA service principal certmonger should use when requesting cert.
 #                                      e.g. `HTTP/webserver.example.com`.
@@ -31,6 +32,7 @@
 define certmonger::request_ipa_cert (
   $certfile,
   $keyfile,
+  $keysize     = undef,
   $hostname    = undef,
   $principal   = undef,
   $dns         = undef,
@@ -51,6 +53,12 @@ define certmonger::request_ipa_cert (
 
   $options = "-f ${certfile} -k ${keyfile}"
   $options_certfile = "-f ${certfile}"
+
+  if $keysize {
+    $options_keysize = "-g ${keysize}"
+  else {
+    $options_keysize = ''
+  }
 
   if $hostname {
     $subject = "CN=${hostname}"
@@ -137,7 +145,7 @@ define certmonger::request_ipa_cert (
     $options_issuerdn = ''
   }
 
-  $request_attrib_options = "${options_subject} ${options_principal} ${options_dns} \
+  $request_attrib_options = "${options_keysize} ${options_subject} ${options_principal} ${options_dns} \
     ${options_usage} ${options_eku} ${options_issuer} ${options_profile} ${options_presavecmd} ${options_postsavecmd}"
   $verify_attrib_options = "${options_subject} ${options_principal} ${options_dns_csv} \
     ${options_usage_csv} ${options_eku_csv} ${options_issuerdn} ${options_presavecmd} ${options_postsavecmd}"
