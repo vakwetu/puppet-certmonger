@@ -19,7 +19,8 @@ describe 'certmonger::request_ipa_cert' do
 
     command = "rm -rf /tmp/server.key /tmp/server.crt ; mkdir -p `dirname /tmp/server.key` `dirname /tmp/server.crt` ; "\
               "ipa-getcert stop-tracking -f /tmp/server.crt ; "\
-              "ipa-getcert request -f /tmp/server.crt -k /tmp/server.key"
+              "ipa-getcert request -f /tmp/server.crt -k /tmp/server.key"\
+              "         "
 
     it { is_expected.to compile.with_all_deps }
     it { is_expected.to contain_exec('ipa-getcert-request-/tmp/server.crt').with_command(command) }
