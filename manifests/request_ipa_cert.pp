@@ -5,7 +5,7 @@
 # === Parameters
 #
 # $certfile::     Full path of certificate to be managed by certmonger. e.g. `/path/to/certificate.crt`
-# $keyfile::      Full path to private key file to be manaegd by certmonger. e.g. `/path/to/key.pem`
+# $keyfile::      Full path to private key file to be managed by certmonger. e.g. `/path/to/key.pem`
 # $keysize::      Generate keys with a specific keysize in bits. e.g. `4096`
 # $hostname::     Hostname to use (appears in subject field of cert). e.g. `webserver.example.com`
 # $principal::    IPA service principal certmonger should use when requesting cert.
@@ -142,11 +142,15 @@ define certmonger::request_ipa_cert (
     $options_issuerdn = ''
   }
 
-  $resubmit_attrib_options = "${options_subject} ${options_principal} ${options_dns} ${options_cacertfile} \
-    ${options_usage} ${options_eku} ${options_issuer} ${options_profile} ${options_presavecmd} ${options_postsavecmd}"
+  $resubmit_attrib_options = @("EOT"/)
+    ${options_subject} ${options_principal} ${options_dns} ${options_cacertfile} \
+    ${options_usage} ${options_eku} ${options_issuer} ${options_profile} ${options_presavecmd} ${options_postsavecmd}
+    |-EOT
   $request_attrib_options = "${options_keysize} ${resubmit_attrib_options}"
-  $verify_attrib_options = "${options_subject} ${options_principal} ${options_dns_csv} \
-    ${options_usage_csv} ${options_eku_csv} ${options_issuerdn} ${options_presavecmd} ${options_postsavecmd}"
+  $verify_attrib_options = @("EOT"/)
+    ${options_subject} ${options_principal} ${options_dns_csv} \
+    ${options_usage_csv} ${options_eku_csv} ${options_issuerdn} ${options_presavecmd} ${options_postsavecmd}
+    |-EOT
 
   exec { "ipa-getcert-${certfile}-trigger":
     path    => '/usr/bin:/bin',
@@ -157,13 +161,17 @@ define certmonger::request_ipa_cert (
     notify  => [Exec["ipa-getcert-request-${certfile}"],Exec["ipa-getcert-resubmit-${certfile}"]],
   }
 
+  $cmd_getcert_request = @("EOT"/)
+    rm -rf ${keyfile} ${certfile} ; mkdir -p `dirname ${keyfile}` `dirname ${certfile}` ; \
+    ipa-getcert stop-tracking ${options_certfile} ; \
+    ipa-getcert request ${options} ${request_attrib_options}
+    |-EOT
+
   exec { "ipa-getcert-request-${certfile}":
     refreshonly => true,
     path        => '/usr/bin:/bin',
     provider    => 'shell',
-    command     => "rm -rf ${keyfile} ${certfile} ; mkdir -p `dirname ${keyfile}` `dirname ${certfile}` ;
-                    ipa-getcert stop-tracking ${options_certfile} ;
-                    ipa-getcert request ${options} ${request_attrib_options}",
+    command     => $cmd_getcert_request,
     unless      => "${::certmonger::scripts::verifyscript} ${options}",
     notify      => Exec["ipa-getcert-${certfile}-verify"],
     require     => [Service['certmonger'],File[$::certmonger::scripts::verifyscript]],

@@ -17,9 +17,9 @@ describe 'certmonger::request_ipa_cert' do
       {}
     end
 
-    command = "rm -rf /tmp/server.key /tmp/server.crt ; mkdir -p `dirname /tmp/server.key` `dirname /tmp/server.crt` ;
-                    ipa-getcert stop-tracking -f /tmp/server.crt ;
-                    ipa-getcert request -f /tmp/server.crt -k /tmp/server.key               "
+    command = "rm -rf /tmp/server.key /tmp/server.crt ; mkdir -p `dirname /tmp/server.key` `dirname /tmp/server.crt` ; "\
+              "ipa-getcert stop-tracking -f /tmp/server.crt ; "\
+              "ipa-getcert request -f /tmp/server.crt -k /tmp/server.key"
 
     it { is_expected.to compile.with_all_deps }
     it { is_expected.to contain_exec('ipa-getcert-request-/tmp/server.crt').with_command(command) }
@@ -43,9 +43,12 @@ describe 'certmonger::request_ipa_cert' do
       }
     end
 
-    command = "rm -rf /tmp/server.key /tmp/server.crt ; mkdir -p `dirname /tmp/server.key` `dirname /tmp/server.crt` ;
-                    ipa-getcert stop-tracking -f /tmp/server.crt ;
-                    ipa-getcert request -f /tmp/server.crt -k /tmp/server.key -g 4096 -N CN=myhost.example.com -K HTTP/myhost.example.com -D www.example.com -D myhost.example.com -F '/path/to/ca.crt'     -u digitalSignature -u nonRepudiation -u keyEncipherment -U id-kp-clientAuth -U id-kp-serverAuth -X 'ca-puppet' -T 'caIPAserviceCert' -B '/bin/systemctl stop httpd' -C '/bin/systemctl start httpd'"
+    command = "rm -rf /tmp/server.key /tmp/server.crt ; mkdir -p `dirname /tmp/server.key` `dirname /tmp/server.crt` ; "\
+              "ipa-getcert stop-tracking -f /tmp/server.crt ; "\
+              "ipa-getcert request -f /tmp/server.crt -k /tmp/server.key -g 4096 -N CN=myhost.example.com "\
+              "-K HTTP/myhost.example.com -D www.example.com -D myhost.example.com -F '/path/to/ca.crt' "\
+              "-u digitalSignature -u nonRepudiation -u keyEncipherment -U id-kp-clientAuth -U id-kp-serverAuth "\
+              "-X 'ca-puppet' -T 'caIPAserviceCert' -B '/bin/systemctl stop httpd' -C '/bin/systemctl start httpd'"
 
     it { is_expected.to compile.with_all_deps }
     it { is_expected.to contain_exec('ipa-getcert-request-/tmp/server.crt').with_command(command) }
@@ -69,9 +72,12 @@ describe 'certmonger::request_ipa_cert' do
       }
     end
 
-    command = "rm -rf /tmp/server.key /tmp/server.crt ; mkdir -p `dirname /tmp/server.key` `dirname /tmp/server.crt` ;
-                    ipa-getcert stop-tracking -f /tmp/server.crt ;
-                    ipa-getcert request -f /tmp/server.crt -k /tmp/server.key -g 4096 -N CN=myhost.example.com -K HTTP/myhost.example.com -D www.example.com -D myhost.example.com -F '/path/to/ca.crt'     -u digitalSignature -u nonRepudiation -u keyEncipherment -U id-kp-clientAuth -U id-kp-serverAuth -X 'ca-puppet' -T 'caIPAserviceCert' -B '/bin/systemctl stop httpd' -C '/bin/systemctl start httpd'"
+    command = "rm -rf /tmp/server.key /tmp/server.crt ; mkdir -p `dirname /tmp/server.key` `dirname /tmp/server.crt` ; "\
+              "ipa-getcert stop-tracking -f /tmp/server.crt ; "\
+              "ipa-getcert request -f /tmp/server.crt -k /tmp/server.key -g 4096 -N CN=myhost.example.com "\
+              "-K HTTP/myhost.example.com -D www.example.com -D myhost.example.com -F '/path/to/ca.crt' "\
+              "-u digitalSignature -u nonRepudiation -u keyEncipherment -U id-kp-clientAuth -U id-kp-serverAuth "\
+              "-X 'ca-puppet' -T 'caIPAserviceCert' -B '/bin/systemctl stop httpd' -C '/bin/systemctl start httpd'"
 
     it { is_expected.to compile.with_all_deps }
     it { is_expected.to contain_exec('ipa-getcert-request-/tmp/server.crt').with_command(command) }
