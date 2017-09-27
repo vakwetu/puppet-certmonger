@@ -165,9 +165,10 @@ rejected by the CA. This is done by setting the 'cleanup_on_error' flag.
 
 ## Acknowledgements
 
-This module is brought to you by [Salted Signal](https://www.saltedsignal.com.au) - a Melbourne-based cloud automation, security and compliance company.
+This module is brought to you by [Salted Signal](https://www.saltedsignal.com.au) - a Melbourne-based cloud automation, DevSecOps, security and compliance company.
 
 Honorable mentions go out to:
 * Rob Crittenden for his work on https://github.com/rcritten/puppet-certmonger, which was used as inspiration for this module.
 * Juan Antonio Osorio for his work on the certmonger type/provider and setting up rpsec tests/travis-ci integration.
 * Alex J Fisher for fixing rubocop violations
+* Ewoud Kohl van Wijngaarden for implementing Puppet 4 types and contributing tests for the defined type.
