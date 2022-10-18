@@ -5,6 +5,7 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
 
   confine exists: '/usr/sbin/certmonger'
   commands getcert: '/usr/bin/getcert'
+  commands openssl: '/usr/bin/openssl'
 
   mk_resource_methods
 
@@ -30,6 +31,12 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
     parse_cert_list(output)
   end
 
+  def self.fix_key_size(cert)
+    data = openssl('rsa', '-in', cert[:keyfile], '-text', '-noout')
+    cert[:key_size] = data.match(/RSA Private-Key: \(([\d]*)(.*)/)[1]
+    cert
+  end
+
   def self.parse_cert_list(list_output)
     output_array = list_output.split("\n")
     cert_list = []
@@ -43,6 +50,9 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
         # New certificate info. Append previous one.
         if current_cert[:name]
           current_cert[:ensure] = :present
+	  if current_cert[:key_size].nil?
+            current_cert = fix_key_size(current_cert)
+          end
           cert_list << current_cert
           current_cert = {}
         end
@@ -98,6 +108,9 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
     end
     if current_cert[:name]
       current_cert[:ensure] = :present
+      if current_cert[:key_size].nil?
+        current_cert = fix_key_size(current_cert)
+      end
       cert_list << current_cert
     end
     cert_list

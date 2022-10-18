@@ -121,6 +121,9 @@ Puppet::Type.newtype(:certmonger_certificate) do
 
   newproperty(:eku, array_matching: :all) do
     desc 'The Extended Key Usage OID\'s names used for the certificate.'
+    def insync?(is)
+      is.sort == should.sort
+    end
   end
 
   newproperty(:status) do
@@ -146,6 +149,9 @@ Puppet::Type.newtype(:certmonger_certificate) do
   newproperty(:key_size) do
     desc 'Size for the key used to generate the certificate.'
     defaultto '2048'
+    def insync?(is)
+      is.to_s == should.to_s
+    end
   end
 
   newproperty(:ca_error) do
